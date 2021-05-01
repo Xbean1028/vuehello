@@ -12,6 +12,44 @@
       <p>
         由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。
       </p>
+      <div class="input-card" style="width: 24rem">
+        <h4>添加、删除图层（Layer）</h4>
+        <div class="input-item">
+          <label>卫星图层：</label>
+          <button
+            class="btn"
+            id="add-satellite-layer"
+            style="margin-right: 1rem"
+          >
+            添加卫星图层
+          </button>
+          <button class="btn" id="remove-satellite-layer">删除卫星图层</button>
+        </div>
+        <div class="input-item">
+          <label>红色标记：</label>
+          <button class="btn" id="add-roadnet-layer" style="margin-right: 1rem">
+            添加路网图层
+          </button>
+          <button class="btn" id="remove-roadnet-layer">删除路网图层</button>
+        </div>
+      </div>
+      <div class="input-card" style="width: 24rem">
+        <h4>添加、删除覆盖物</h4>
+        <div class="input-item">
+          <label>Marker：</label>
+          <button class="btn" id="add-marker" style="margin-right: 1rem">
+            添加Marker
+          </button>
+          <button class="btn" id="remove-marker">删除Marker</button>
+        </div>
+        <div class="input-item">
+          <label>Circle：</label>
+          <button class="btn" id="add-circle" style="margin-right: 1rem">
+            添加Circle
+          </button>
+          <button class="btn" id="remove-circle">删除Circle</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -20,12 +58,12 @@
 export default {
   name: "mapdemo",
   self: this,
-  mounted () {
+  mounted() {
     // 地图初始化
     var mMap = new AMap.Map("wrapper", {
       center: [122.40718607522708, 37.396603265062066],
       resizeEnable: true,
-      zoom: 14
+      zoom: 14,
     });
     mMap.on("complete", function () {
       document.getElementById("tip").innerHTML =
@@ -37,7 +75,7 @@ export default {
         timeout: 10000, // 超过10秒后停止定位，默认：5s
         buttonPosition: "RB", // 定位按钮的停靠位置
         buttonOffset: new AMap.Pixel(10, 20), // 定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-        zoomToAccuracy: true // 定位成功后是否自动调整地图视野到定位点
+        zoomToAccuracy: true, // 定位成功后是否自动调整地图视野到定位点
       });
       mMap.addControl(geolocation);
       geolocation.getCurrentPosition(function (status, result) {
@@ -48,8 +86,68 @@ export default {
         }
       });
     });
+    // 构造官方卫星、路网图层
+    var satelliteLayer = new AMap.TileLayer.Satellite();
+    var roadNetLayer = new AMap.TileLayer.RoadNet();
+
+    //批量添加图层
+    mMap.add([satelliteLayer, roadNetLayer]);
+
+    //官方卫星、路网图层事件绑定
+    document.querySelector("#add-satellite-layer").onclick = function () {
+      mMap.add(satelliteLayer);
+    };
+
+    document.querySelector("#remove-satellite-layer").onclick = function () {
+      mMap.remove(satelliteLayer);
+    };
+
+    document.querySelector("#add-roadnet-layer").onclick = function () {
+      mMap.add(roadNetLayer);
+    };
+
+    document.querySelector("#remove-roadnet-layer").onclick = function () {
+      mMap.remove(roadNetLayer);
+    };
+
+    // 构造点标记
+    var marker = new AMap.Marker({
+      icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+      // position: [116.405467, 39.907761],
+      position: mMap.getCenter(),
+      zoom: 14,
+    });
+    // 构造矢量圆形
+    var circle = new AMap.Circle({
+      // center: new AMap.LngLat("116.403322", "39.920255"), // 圆心位置
+      center: new AMap.LngLat("122.0807", "37.53425"), // 圆心位置
+      radius: 300, //半径1000m
+      strokeColor: "#F33", //线颜色
+      strokeOpacity: 1, //线透明度
+      strokeWeight: 3, //线粗细度
+      fillColor: "#ee2200", //填充颜色
+      fillOpacity: 0.35, //填充透明度
+    });
+    //点标记事件绑定
+    document.querySelector("#add-marker").onclick = function () {
+      mMap.add(marker);
+      mMap.setFitView();
+    };
+    document.querySelector("#remove-marker").onclick = function () {
+      mMap.remove(marker);
+      mMap.setFitView();
+    };
+    document.querySelector("#add-circle").onclick = function () {
+      mMap.add(circle);
+      mMap.setFitView();
+    };
+    document.querySelector("#remove-circle").onclick = function () {
+      mMap.remove(circle);
+      mMap.setFitView();
+    };
+
     // 解析定位结果
-    function onComplete (data) {
+    function onComplete(data) {
       document.getElementById("status").innerHTML = "定位成功";
       var str = [];
       str.push("定位结果：" + data.position);
@@ -61,18 +159,17 @@ export default {
       document.getElementById("result").innerHTML = str.join("<br>");
     }
     // 解析定位错误信息
-    function onError (data) {
+    function onError(data) {
       document.getElementById("status").innerHTML = "定位失败";
       document.getElementById("result").innerHTML =
         "失败原因排查信息:" + data.message;
     }
   },
-  methods: {}
+  methods: {},
 };
 </script>
 
 <style scoped>
-
 .info {
   width: 26rem;
   text-align: center;
