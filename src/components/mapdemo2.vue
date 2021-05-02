@@ -9,9 +9,9 @@
       <hr />
       <p id="result"></p>
       <hr />
-      <p>
+      <!-- <p>
         由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。
-      </p>
+      </p> -->
       <div class="input-card" style="width: 24rem">
         <h4>添加、删除图层（Layer）</h4>
         <div class="input-item">
