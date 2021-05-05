@@ -72,10 +72,10 @@ export default {
     });
     // 创建两个点标记
     var m1 = new AMap.Marker({
-      position: [116.49, 39.9],
+      position: [122.08078, 37.53423],
     });
     var m2 = new AMap.Marker({
-      position: [116.29, 39.9],
+      position: [122.085988, 37.533925],
     });
     // var m3 = new AMap.Marker({
     //   position: [116.69, 39.9],

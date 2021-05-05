@@ -128,7 +128,7 @@ export default {
 .appbody{
   width:100%;
   height:100%;
-  background:url('../assets/bg2.jpg');
+  background:url('../assets/bg4.jpg');
   background-repeat: no-repeat;
   background-size:100% 100%;
   background-attachment:fixed;
