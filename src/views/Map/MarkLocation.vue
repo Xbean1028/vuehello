@@ -1,10 +1,35 @@
 <template>
   <body>
+    <div class="block">
+      <!-- <span>111{{$store.getters.getUser.dev}}</span> -->
+      <span class="demonstration">设备筛选</span>
+      <el-select v-model="valuedev" placeholder="请选择设备">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+      <el-button type="success" icon="el-icon-check" circle @click="onSearchdev"></el-button>
+    </div>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
 
     <div id="tip" class="info">地图正在加载</div>
     <div class="info"></div>
+
+    <el-table :data="tableData" height="100" border style="width: 100%">
+      <el-table-column prop="dev_id" label="设备id">
+      </el-table-column>
+      <el-table-column prop="GPSdate" label="日期" width="180"> </el-table-column>
+      <el-table-column prop="weideg" label="纬度" width="180"> </el-table-column>
+      <el-table-column prop="wei" label="纬度半球"> </el-table-column>
+      <el-table-column prop="jingdeg" label="纬度" width="180"> </el-table-column>
+      <el-table-column prop="jing" label="经度半球"> </el-table-column>
+    </el-table>
+
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="经度">
         <el-input v-model="form.input1"></el-input>
@@ -25,6 +50,8 @@
 </template>
 
 <script>
+import store from '../../store/index'
+var selfs =this;
 export default {
   self: this,
   name: "MarkLocation",
@@ -35,6 +62,25 @@ export default {
         input1: "",
         input2: "",
       },
+      options: [
+        // {
+        //   value: "选项1",
+        //   label: "Dev1",
+        // },
+      ],
+      valuedev: "",
+      tableData: [
+        // {
+        //   GPSdate: "2016-05-03 19:20:30",
+        //   dev_id: "dev1",
+        //   weideg: "37.53207466666667",
+        //   wei: "N",
+        //   jingdeg: "122.07993716666667",
+        //   jing: "E",
+        // },
+      ],
+      dev:store.getters.getUser.dev,
+      userid:store.getters.getUser.name,
     };
   },
   beforeRouteEnter: (to, from, next) => {
@@ -44,6 +90,10 @@ export default {
   beforeRouteLeave: (to, from, next) => {
     console.log("离开位置信息界面");
     next();
+  },
+  created(){
+		  selfs = this;
+      
   },
   mounted() {
     // 地图初始化
@@ -84,10 +134,14 @@ export default {
     //   icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
     // });
 
-    mMap.add(m1);
-    mMap.add(m2);
-    // mMap.add(m3);
-    mMap.setFitView();
+    // mMap.add(m1);
+    // mMap.add(m2);
+    // // mMap.add(m3);
+    // mMap.setFitView();
+    this.dev.forEach(function (element) {
+      console.log(element.value);
+      selfs.options.push({"value":element.value,"label":element.value})
+    });
   },
   methods: {
     onSubmit() {
@@ -102,6 +156,40 @@ export default {
     onremove() {
       self.mMap.clearMap();
     },
+    onSearchdev(){
+      console.log(this.valuedev);
+      this.axios.get("http://127.0.0.1:8000/mapwebapp/getLastData", {
+              params: {
+                devid: this.valuedev
+              },
+            })
+            .then((response) => {
+              console.log("/a", response.data);
+              if (response.data.code == "OK") {
+                var tempdata = []
+                var tempitem =null
+                var item = null
+                this.tableData.splice(0,this.tableData.length)
+                for (item of response.data.datas){
+                  tempitem = {'dev_id':item.dev_id,'weideg':item.weideg,'jingdeg':item.jingdeg,'GPSdate':item.GPSdate,"wei":'N','jing':'E'};
+                  this.tableData.push(tempitem);
+                  var m66 = new AMap.Marker({
+                  position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
+                  icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
+                  self.mMap.add(m66);
+                  self.mMap.setFitView();
+                }
+                // this.re_dev = response.data.dev;
+                // sessionStorage.setItem("isLogin", "true");
+                // this.$store.dispatch("asyncUpdateUser", {
+                //   name: this.form.name,
+                //   dev:this.re_dev
+                // });
+                // this.$router.push("/index");
+              }
+            })
+            .catch(error => console.log(error))
+    }
   },
 };
 </script>
