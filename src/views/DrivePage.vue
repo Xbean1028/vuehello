@@ -1,6 +1,5 @@
 <template>
   <div>
-    <p>我是Drive页面</p>
     <el-row>
       <el-col :span="24"
         ><div class="grid-content bg-purple-dark">我的设备</div></el-col
@@ -11,14 +10,13 @@
       </el-table-column>
       <el-table-column prop="user_id" label="用户id">
       </el-table-column>
-      <el-table-column prop="insert_time" label="添加时间">
+      <el-table-column prop="insert_time" label="添加时间" width="180">
       </el-table-column>
       <el-table-column prop="dev_state" label="设备状态" >
       </el-table-column>
       <el-table-column
         prop="isdelete"
         label="逻辑删除"
-        width="100"
       ></el-table-column>
 
       <el-table-column label="操作" width="100">
@@ -36,6 +34,8 @@
 </template>
 
 <script>
+import store from '../store/index'
+var selfs =this;
 export default {
   name: "DrivePage",
   data() {
@@ -48,21 +48,9 @@ export default {
           dev_state: "0",
           isdelete: 0,
         },
-        {
-          dev_id: "dev2",
-          user_id: "test1",
-          insert_time: "2021-05-01 19:20:30",
-          dev_state: "0",
-          isdelete: 0,
-        },
-        {
-          dev_id: "dev3",
-          user_id: "test1",
-          insert_time: "2021-05-01 19:20:30",
-          dev_state: "0",
-          isdelete: 0,
-        },
       ],
+      dev:store.getters.getUser.dev,
+      userid:store.getters.getUser.name,
     };
   },
   beforeRouteEnter: (to, from, next) => {
@@ -73,10 +61,35 @@ export default {
     console.log("离开设备管理界面");
     next();
   },
+  created () {
+    this.onSearchdev();
+  },
   methods: {
     handleClick(row) {
       console.log(row);
     },
+    onSearchdev(){
+      console.log(this.valuedev);
+      this.axios.get("http://127.0.0.1:8000/mapwebapp/getDevInfo", {
+              params: {
+                name: this.userid
+              },
+            })
+            .then((response) => {
+              console.log("/a", response.data);
+              if (response.data.code == "OK") {
+                var tempdata = []
+                var tempitem =null
+                var item = null
+                this.tableData.splice(0,this.tableData.length)
+                for (item of response.data.datas){
+                  tempitem = {'user_id':item.user_id,'dev_id':item.dev_id,'insert_time':item.insert_time,'dev_state':item.dev_state,"isdelete":item.isDelete};
+                  this.tableData.push(tempitem);
+                }
+              }
+            })
+            .catch(error => console.log(error))
+    }
   },
 };
 </script>

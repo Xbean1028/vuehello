@@ -2,11 +2,10 @@
   <body>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
-    <div class="input-card" style="width: 120px">
+    <div class="input-card" style="width: 200px">
       <button
         class="btn"
         @click="rectangleEditoropen"
-        style="margin-bottom: 5px"
       >
         开始编辑
       </button>
@@ -174,8 +173,11 @@ body {
   height: 100%;
 }
 .input-card {
-  width: 150px;
   top: 10px;
+  margin: auto;
   bottom: auto;
+  align-items:center;
+  display: flex;
+  justify-content:space-around;
 }
 </style>

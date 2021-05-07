@@ -58,7 +58,8 @@
       </el-aside>
 
       <el-container>
-        <el-header style="text-align: right; font-size: 12px">
+        <el-header style="text-align: right; font-size: 12p;background-color: #E4E7ED;height:60px">
+          <spin>Beta 1.0 </spin>
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
@@ -89,6 +90,13 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 export default {
   name: "Index",
+  data () {
+      return {
+        circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+        squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
+        sizeList: ["large", "medium", "small"]
+      }
+    },
   methods: {
     logout() {
       console.log("logout");

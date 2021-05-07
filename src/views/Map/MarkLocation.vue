@@ -120,7 +120,8 @@ export default {
     });
     mMap.on("complete", function () {
       document.getElementById("tip").innerHTML =
-        "地图图块加载完毕！初始地图中心点为：" + mMap.getCenter();
+        "地图图块加载完毕！";
+        // 初始地图中心点为：" + mMap.getCenter();
     });
     // 创建两个点标记
     var m1 = new AMap.Marker({
@@ -211,6 +212,7 @@ export default {
 }
 html,
 body {
+  margin-top:0px;
   height: 100%;
 }
 #container {
@@ -220,5 +222,8 @@ body {
   width: 150px;
   top: 10px;
   bottom: auto;
+}
+.block{
+  margin-top:0;
 }
 </style>
