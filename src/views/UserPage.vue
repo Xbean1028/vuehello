@@ -6,14 +6,14 @@
         ><div class="grid-content bg-purple-dark">用户信息</div
       ></el-col>
     </el-row>
-    <el-table :data="tableData" border style="width: 60%" height="350">
-      <el-table-column prop="name" label="用户名" width="120"> </el-table-column>
-      <el-table-column prop="id" label="用户id" width="120"> </el-table-column>
-      <el-table-column prop="email" label="Email" width="200"> </el-table-column>
-      <el-table-column prop="tel" label="电话" width="200"> </el-table-column>
-      <el-table-column prop="pass" label="密码" width="120"></el-table-column>
+    <el-table :data="tableData" border style="width: 80%" height="350">
+      <el-table-column prop="name" label="用户名"> </el-table-column>
+      <el-table-column prop="id" label="用户id" > </el-table-column>
+      <el-table-column prop="email" label="Email" > </el-table-column>
+      <el-table-column prop="tel" label="电话" > </el-table-column>
+      <el-table-column prop="pass" label="密码" ></el-table-column>
 
-      <el-table-column label="操作" width="100">
+      <el-table-column label="操作" >
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button

@@ -13,6 +13,8 @@
         <el-input v-model="form.input2"></el-input>
       </el-form-item>
 
+      
+
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button>取消</el-button>
@@ -97,9 +99,9 @@ export default {
       self.mMap.add(m3);
       self.mMap.setFitView();
     },
-    onremove(){
-        self.mMap.clearMap();
-    }
+    onremove() {
+      self.mMap.clearMap();
+    },
   },
 };
 </script>

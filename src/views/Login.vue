@@ -26,39 +26,75 @@
 <script>
 export default {
   name: "Login",
-  data () {
+  data() {
     return {
       form: {
         name: "",
-        password: ""
+        password: "",
       },
       rules: {
         name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
-      }
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+      },
+      re_dev:null,
     };
   },
   methods: {
-    onsubmit () {
+    onsubmit() {
       this.$router.push("/index");
     },
     // eslint-disable-next-line no-unused-vars
-    submitForm (form) {
+    submitForm(form) {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          sessionStorage.setItem("isLogin", "true");
-          this.$store.dispatch('asyncUpdateUser', { name: this.form.name });
-          this.$router.push("/index");
+          this.axios
+            .get("http://127.0.0.1:8000/mapwebapp/check", {
+              params: {
+                name: form.name,
+                pass: form.password,
+              },
+            })
+            .then((response) => {
+              console.log("/a", response.data);
+              if (response.data.code == "OK") {
+                this.re_dev = response.data.dev;
+                sessionStorage.setItem("isLogin", "true");
+                this.$store.dispatch("asyncUpdateUser", {
+                  name: this.form.name,
+                  dev:this.re_dev
+                });
+                this.$router.push("/index");
+              } else {
+                this.$message({
+                  message: "用户名或密码错误",
+                  type: "warning",
+                });
+              }
+            });
         } else {
           this.$message({
             message: "用户名或密码错误",
-            type: "warning"
+            type: "warning",
           });
           return false;
         }
       });
-    }
-  }
+
+      // this.$refs.form.validate((valid) => {
+      //   if (valid) {
+      //     sessionStorage.setItem("isLogin", "true");
+      //     this.$store.dispatch('asyncUpdateUser', { name: this.form.name });
+      //     this.$router.push("/index");
+      //   } else {
+      //     this.$message({
+      //       message: "用户名或密码错误",
+      //       type: "warning"
+      //     });
+      //     return false;
+      //   }
+      // });
+    },
+  },
 };
 </script>
 

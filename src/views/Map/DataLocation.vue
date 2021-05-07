@@ -1,10 +1,47 @@
 <template>
   <body>
+    <div class="block">
+      <!-- <span>111{{$store.getters.getUser.dev}}</span> -->
+      <span class="demonstration">设备筛选</span>
+      <el-select v-model="value" placeholder="请选择设备">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
+      </el-select>
+      <span class="demonstration">日期筛选</span>
+
+      <el-date-picker
+        v-model="value2"
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+      >
+      </el-date-picker>
+    </div>
+
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
 
     <div id="tip" class="info">地图正在加载</div>
     <div class="info"></div>
+    <el-table :data="tableData" height="250" border style="width: 100%">
+      <el-table-column prop="dev_id" label="设备id" width="180">
+      </el-table-column>
+      <el-table-column prop="date" label="日期"> </el-table-column>
+      <el-table-column prop="weideg" label="纬度"> </el-table-column>
+      <el-table-column prop="wei" label="纬度半球"> </el-table-column>
+      <el-table-column prop="jingdeg" label="纬度"> </el-table-column>
+      <el-table-column prop="jing" label="经度半球"> </el-table-column>
+    </el-table>
+
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="经度">
         <el-input v-model="form.input1"></el-input>
@@ -23,26 +60,98 @@
 </template>
 
 <script>
+import store from '../../store/index'
+var selfs =this;
+
 export default {
-  self: this,
+
   name: "DataLocation",
   self: this,
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+        shortcuts: [
+          {
+            text: "最近一周",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近一个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+          {
+            text: "最近三个月",
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit("pick", [start, end]);
+            },
+          },
+        ],
+      },
+      value1: "",
+      value2: "",
+      options: [
+        // {
+        //   value: "选项1",
+        //   label: "Dev1",
+        // },
+      ],
+      value: "",
       form: {
         input1: "",
         input2: "",
       },
+      tableData: [
+        {
+          date: "2016-05-03 19:20:30",
+          dev_id: "dev1",
+          weideg: "37.53207466666667",
+          wei: "N",
+          jingdeg: "122.07993716666667",
+          jing: "E",
+        },
+        {
+          date: "2016-05-03 19:20:30",
+          dev_id: "dev1",
+          weideg: "37.53207466666667",
+          wei: "N",
+          jingdeg: "122.07993716666667",
+          jing: "E",
+        },
+      ],
+      dev:store.getters.getUser.dev
     };
   },
   beforeRouteEnter: (to, from, next) => {
     console.log("进入数据位置信息界面");
+    // self.getDataDev;
+    // console.log(self.dev);
     next();
   },
   beforeRouteLeave: (to, from, next) => {
     console.log("离开数据位置信息界面");
     next();
   },
+  created(){
+		  selfs = this;
+      
+  },
+  
   mounted() {
     // 地图初始化
     var mMap = new AMap.Map("wrapper", {
@@ -90,6 +199,18 @@ export default {
     mMap.add(m3);
     // mMap.add(m3);
     mMap.setFitView();
+    // selfs.getDataDev;
+    
+    // console.log(store.getters.getUser.dev);
+    console.log(this.dev[0].value);
+    // this.options.push({"value":this.dev[0].value,"label":this.dev[0].value})
+    
+    this.dev.forEach(function (element) {
+      console.log(element.value);
+      selfs.options.push({"value":element.value,"label":element.value})
+    });
+    console.log(this.options);
+    
   },
   methods: {
     onSubmit() {
@@ -101,10 +222,19 @@ export default {
       self.mMap.add(m33);
       self.mMap.setFitView();
     },
-    onremove(){
-        self.mMap.clearMap();
+    onremove() {
+      self.mMap.clearMap();
+    },
+    
+  },
+  computed: {
+    // 计算属性的 getter
+    reversedState: function () {
+      // `this` 指向 vm 实例
+      return this.$store.getters.getUser.dev;
     }
   },
+  
 };
 </script>
 

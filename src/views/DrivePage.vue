@@ -6,19 +6,19 @@
         ><div class="grid-content bg-purple-dark">我的设备</div></el-col
       >
     </el-row>
-    <el-table :data="tableData" border style="width: 60%" height="350">
-      <el-table-column prop="dev_id" label="设备id" width="120">
+    <el-table :data="tableData" border style="width: 80%" height="350">
+      <el-table-column prop="dev_id" label="设备id">
       </el-table-column>
-      <el-table-column prop="user_id" label="用户id" width="120">
+      <el-table-column prop="user_id" label="用户id">
       </el-table-column>
-      <el-table-column prop="insert_time" label="添加时间" width="200">
+      <el-table-column prop="insert_time" label="添加时间">
       </el-table-column>
-      <el-table-column prop="dev_state" label="设备状态" width="200">
+      <el-table-column prop="dev_state" label="设备状态" >
       </el-table-column>
       <el-table-column
         prop="isdelete"
         label="逻辑删除"
-        width="120"
+        width="100"
       ></el-table-column>
 
       <el-table-column label="操作" width="100">
