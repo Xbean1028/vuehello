@@ -171,25 +171,39 @@ export default {
                 var tempitem =null
                 var item = null
                 this.tableData.splice(0,this.tableData.length)
+                self.mMap.clearMap();
                 for (item of response.data.datas){
                   tempitem = {'dev_id':item.dev_id,'weideg':item.weideg,'jingdeg':item.jingdeg,'GPSdate':item.GPSdate,"wei":'N','jing':'E'};
                   this.tableData.push(tempitem);
-                  var m66 = new AMap.Marker({
-                  position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
-                  icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
-                  self.mMap.add(m66);
-                  self.mMap.setFitView();
+                  var position= [parseFloat(item.jingdeg), parseFloat(item.weideg)];
+                  this.convertFrom(position,'gps');
+                  // var m66 = new AMap.Marker({
+                  // position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
+                  // icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
+                  // self.mMap.add(m66);
+                  // self.mMap.setFitView();
                 }
-                // this.re_dev = response.data.dev;
-                // sessionStorage.setItem("isLogin", "true");
-                // this.$store.dispatch("asyncUpdateUser", {
-                //   name: this.form.name,
-                //   dev:this.re_dev
-                // });
-                // this.$router.push("/index");
               }
             })
             .catch(error => console.log(error))
+    },
+    // 坐标转换
+    convertFrom(lnglat, type){
+        AMap.convertFrom(lnglat, type, function (status, result) {
+          if (result.info === 'ok') {
+            var resLnglat = result.locations[0];
+            var m22 = new AMap.Marker({
+                position: resLnglat,
+            });
+            self.mMap.add(m22);
+            self.mMap.setFitView();
+            // 设置标签
+            // m2.setLabel({
+            //     offset: new AMap.Pixel(20, 20),
+            //     content: "高德坐标系中首开广场（正确）"
+            // });
+          }
+        });
     }
   },
 };

@@ -11,7 +11,7 @@
     </div>
     <div id="mapContainer"></div>
     <div>
-      <span>定位：</span>
+      <span>定位点：</span>
       <input type="text" v-model="selectAddress" />
     </div>
     <div>
@@ -149,7 +149,7 @@ input {
   width: 300px;
   height: 25px;
   padding-left: 10px;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 #mapContainer {
   width: 100%;
