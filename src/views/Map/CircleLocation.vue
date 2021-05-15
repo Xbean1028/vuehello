@@ -145,6 +145,8 @@ export default {
     },
     rectangleEditorclose() {
       self.rectangleEditor.close();
+      console.log(self.rectangleEditor.bounds);
+      // getBoundingClientRect
     },
   },
 };
