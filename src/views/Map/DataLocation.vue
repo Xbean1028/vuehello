@@ -16,17 +16,18 @@
       <span class="demonstration">日期筛选</span>
 
       <el-date-picker
-        v-model="value2"
+        v-model="valuedate"
         type="daterange"
         align="right"
         unlink-panels
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
+        value-format="yyyy,MM,dd"
         :picker-options="pickerOptions"
       >
       </el-date-picker>
-      <el-button type="success" icon="el-icon-check" circle></el-button>
+      <el-button type="success" icon="el-icon-check" circle @click="onSearchdatedev"></el-button>
     </div>
 
     <div id="wrapper"></div>
@@ -106,7 +107,7 @@ export default {
         ],
       },
       value1: "",
-      value2: "",
+      valuedate: "",
       options: [
         // {
         //   value: "选项1",
@@ -266,6 +267,38 @@ export default {
             // });
           }
         });
+    },
+    onSearchdatedev(){
+      console.log(this.valuedate);
+      this.axios.get("http://127.0.0.1:8000/mapwebapp/getAllDateData", {
+              params: {
+                devid: this.valuedev,
+                valuedate1:this.valuedate[0],
+                valuedate2:this.valuedate[1]
+              },
+            })
+            .then((response) => {
+              console.log("/a", response.data);
+              if (response.data.code == "OK") {
+                var tempdata = []
+                var tempitem =null
+                var item = null
+                this.tableData.splice(0,this.tableData.length)
+                self.mMap.clearMap();
+                for (item of response.data.datas){
+                  tempitem = {'dev_id':item.dev_id,'weideg':item.weideg,'jingdeg':item.jingdeg,'GPSdate':item.GPSdate,"wei":'N','jing':'E'};
+                  this.tableData.push(tempitem);
+                  var position= [parseFloat(item.jingdeg), parseFloat(item.weideg)];
+                  this.convertFrom(position,'gps');
+                  // var m66 = new AMap.Marker({
+                  // position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
+                  // icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
+                  // self.mMap.add(m66);
+                  // self.mMap.setFitView();
+                }
+              }
+            })
+            .catch(error => console.log(error))
     }
     
   },
