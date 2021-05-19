@@ -29,7 +29,8 @@ aMap.initAMapApiLoader({
         'AMap.Geocoder',
         'AMap.AMapManager',
         'AMap.Marker',
-        'AMap.RectangleEditor'
+        'AMap.RectangleEditor',
+        "AMap.Rectangle"
     ], // 应用功能项
     v: '1.4.15', // 版本
     uiVersion: '1.0' // ui版本
