@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-col :span="24"
-        ><div class="grid-content bg-purple-dark">by bean Github 备案号1234567</div></el-col>      
+        ><div class="grid-content bg-purple-dark">2020-2021 xubean 版权所有 鲁ICP备*******号 blog</div></el-col>      
     </el-row>
   </div>
 </template>

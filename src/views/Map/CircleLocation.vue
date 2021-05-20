@@ -260,7 +260,8 @@ export default {
                 parseFloat(item.jingdeg),
                 parseFloat(item.weideg),
               ];
-              var positionpoint = new AMap.LngLat(item.jingdeg, item.weideg);
+              //var positionpoint = new AMap.LngLat(item.jingdeg, item.weideg);
+              //console.log(this.rectangle.contains(positionpoint));
               this.convertFrom(position, "gps");
               
               
@@ -355,6 +356,7 @@ export default {
             });
             rectangle.setMap(mMap);
             this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
+            selfs.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
             // 缩放地图到合适的视野级别
             self.mMap.setFitView([rectangle]);
             var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
@@ -377,13 +379,30 @@ export default {
     },
     // 坐标转换
     convertFrom(lnglat, type){
+      
         AMap.convertFrom(lnglat, type, function (status, result) {
           if (result.info === 'ok') {
             var resLnglat = result.locations[0];
-            var marker = new AMap.Marker({
+            // var marker = new AMap.Marker({
+            //     position: resLnglat,
+            // });
+            // self.mMap.add(marker);
+            // self.mMap.setFitView();
+            var flag = selfs.rectangle.contains(resLnglat);
+            console.log(flag);
+            if (flag){
+              var marker = new AMap.Marker({
                 position: resLnglat,
-            });
-            self.mMap.add(marker);
+              });
+               self.mMap.add(marker);
+            }
+            else{
+              var marker = new AMap.Marker({
+                position: resLnglat,
+                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+                });
+              self.mMap.add(marker);
+            }
             self.mMap.setFitView();
             //this.marker=marker;
             // 设置标签
