@@ -58,6 +58,7 @@ export default {
   self: this,
   data() {
     return {
+      timer: '',
       form: {
         input1: "",
         input2: "",
@@ -89,6 +90,7 @@ export default {
   },
   beforeRouteLeave: (to, from, next) => {
     console.log("离开位置信息界面");
+    window.clearTimeout(selfs.timer);
     next();
   },
   created(){
@@ -143,6 +145,9 @@ export default {
       console.log(element.value);
       selfs.options.push({"value":element.value,"label":element.value})
     });
+    this.timer = window.setInterval(this.onSearchdev, 20000);
+    selfs.timer = this.timer;
+    //clearTimeout(selfs.timer);
   },
   methods: {
     onSubmit() {

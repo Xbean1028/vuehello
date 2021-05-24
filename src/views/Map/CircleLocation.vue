@@ -75,6 +75,7 @@ export default {
   name: "CircleLocation",
   data() {
     return {
+      timer: '',
       form: {
         input1: "",
         input2: "",
@@ -105,6 +106,7 @@ export default {
       userid: store.getters.getUser.name,
       value1: true, //电子围栏
       markers:'',
+      GPSdatelabel:'',
     };
   },
   beforeRouteEnter: (to, from, next) => {
@@ -113,6 +115,7 @@ export default {
   },
   beforeRouteLeave: (to, from, next) => {
     console.log("离开电子围栏信息界面");
+    window.clearTimeout(selfs.timer);
     next();
   },
   created() {
@@ -154,27 +157,32 @@ export default {
       console.log(element.value);
       selfs.options.push({ value: element.value, label: element.value });
     });
-
-    // var southWest = new AMap.LngLat(122.080724, 37.532681);
-    // var northEast = new AMap.LngLat(122.093434, 37.540323);
-    // var bounds = new AMap.Bounds(southWest, northEast);
-    // var rectangle = new AMap.Rectangle({
-    //   bounds: bounds,
-    //   strokeColor: "red",
-    //   strokeWeight: 6,
-    //   strokeOpacity: 0.5,
-    //   strokeDasharray: [30, 10],
-    //   // strokeStyle还支持 solid
-    //   strokeStyle: "dashed",
-    //   fillColor: "blue",
-    //   fillOpacity: 0.5,
-    //   cursor: "pointer",
-    //   zIndex: 50,
-    // });
-    // rectangle.setMap(mMap);
-    // this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
-    // // 缩放地图到合适的视野级别
-    // mMap.setFitView([rectangle]);
+///////////////////////////////////////////创建rectangle对象，隐藏，防止报错
+    var southWest = new AMap.LngLat(122.080724, 37.532681);
+    var northEast = new AMap.LngLat(122.080724, 37.528681);
+    var bounds = new AMap.Bounds(southWest, northEast);
+    var rectangle = new AMap.Rectangle({
+      bounds: bounds,
+      strokeColor: "red",
+      strokeWeight: 6,
+      strokeOpacity: 0.5,
+      strokeDasharray: [30, 10],
+      // strokeStyle还支持 solid
+      strokeStyle: "dashed",
+      fillColor: "blue",
+      fillOpacity: 0.5,
+      cursor: "pointer",
+      zIndex: 50,
+    });
+    rectangle.setMap(mMap);
+    this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
+    // 缩放地图到合适的视野级别
+    mMap.setFitView([rectangle]);
+    rectangle.hide();
+    //////////////////////////////////////////////////////////
+    this.timer = window.setInterval(this.onSearchdev, 20000);
+    selfs.timer = this.timer;
+    //clearTimeout(selfs.timer);
     // var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
     // self.rectangleEditor = rectangleEditor;
     // rectangleEditor.on("adjust", function (event) {
@@ -256,6 +264,7 @@ export default {
                 jing: "E",
               };
               this.tableData.push(tempitem);
+              this.GPSdatelabel = item.GPSdate;
               var position = [
                 parseFloat(item.jingdeg),
                 parseFloat(item.weideg),
@@ -388,6 +397,7 @@ export default {
             // });
             // self.mMap.add(marker);
             // self.mMap.setFitView();
+            //根据矩形判断，区域内蓝色，区域外红色
             var flag = selfs.rectangle.contains(resLnglat);
             console.log(flag);
             if (flag){
@@ -396,12 +406,22 @@ export default {
               });
                self.mMap.add(marker);
             }
-            else{
+            else if(!flag&&selfs.value1){
               var marker = new AMap.Marker({
                 position: resLnglat,
                 icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
                 });
+              // marker.setLabel({
+              //     offset: new AMap.Pixel(20, 20),
+              //     content: selfs.GPSdatelabel
+              // });
               self.mMap.add(marker);
+            }
+            else{
+              var marker = new AMap.Marker({
+                position: resLnglat,
+              });
+               self.mMap.add(marker);
             }
             self.mMap.setFitView();
             //this.marker=marker;
