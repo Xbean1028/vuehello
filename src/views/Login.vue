@@ -48,7 +48,7 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.axios
-            .get("http://127.0.0.1:8000/mapwebapp/check", {
+            .get("http://127.0.0.1:8000/mapwebapp/checklogin", {
               params: {
                 name: form.name,
                 pass: form.password,
