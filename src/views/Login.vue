@@ -39,16 +39,23 @@ export default {
       re_dev:null,
     };
   },
+  mounted() {
+    console.log(sessionStorage.getItem('isLogin'));
+    if (sessionStorage.getItem('isLogin')){
+        this.$router.push("/index");
+      }
+  },
   methods: {
     onsubmit() {
       this.$router.push("/index");
     },
     // eslint-disable-next-line no-unused-vars
     submitForm(form) {
+      
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.axios
-            .get("http://127.0.0.1:8000/mapwebapp/checklogin", {
+            .get("mapwebapp/checklogin", {
               params: {
                 name: form.name,
                 pass: form.password,

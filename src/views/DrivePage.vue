@@ -2,10 +2,10 @@
   <div>
     <el-row>
       <el-col :span="24"
-        ><div class="grid-content bg-purple-dark">我的设备</div></el-col
+        ><div class="grid-content" style="font: 20px 微软雅黑">我的设备</div></el-col
       >
     </el-row>
-    <el-table :data="tableData" border style="width: 80%" height="350">
+    <el-table :data="tableData" border style="width: 80%" height="400">
       <el-table-column prop="dev_id" label="设备id">
       </el-table-column>
       <el-table-column prop="user_id" label="用户id">
@@ -19,17 +19,17 @@
         label="逻辑删除"
       ></el-table-column>
 
-      <el-table-column label="操作" width="100">
+      <!-- <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small"
             >查看</el-button
           >
           <el-button type="text" size="small">编辑</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
-    <div style="height:300px"></div>
+    <div style="height:100px"></div>
   </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
     },
     onSearchdev(){
       console.log(this.valuedev);
-      this.axios.get("http://127.0.0.1:8000/mapwebapp/getDevInfo", {
+      this.axios.get("mapwebapp/getDevInfo", {
               params: {
                 name: this.userid
               },

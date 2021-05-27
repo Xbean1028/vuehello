@@ -164,7 +164,7 @@ export default {
     },
     onSearchdev(){
       console.log(this.valuedev);
-      this.axios.get("http://127.0.0.1:8000/mapwebapp/getLastData", {
+      this.axios.get("mapwebapp/getLastData", {
               params: {
                 devid: this.valuedev
               },

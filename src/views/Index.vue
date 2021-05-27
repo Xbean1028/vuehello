@@ -21,23 +21,24 @@
             <el-menu-item index="1-3">
               <router-link to="/circleLocation">电子围栏</router-link>
             </el-menu-item>
-            <el-menu-item index="1-4">
-              <router-link to="/mapdemo2">未定义</router-link>
-            </el-menu-item>
+            
           </el-submenu>
           <el-submenu index="2">
             <template slot="title"
               ><i class="el-icon-menu"></i>辅助功能</template
             >
-            <el-menu-item index="1-1">
+            <el-menu-item index="2-1">
+              <router-link to="/mapdemo2">卫星图层</router-link>
+            </el-menu-item>
+            <el-menu-item index="2-2">
               <router-link to="/mapdemo">拾取位置</router-link>
             </el-menu-item>
-            <el-menu-item index="1-2">
+            <el-menu-item index="2-3">
               <router-link to="/getLocation">定位测试</router-link>
             </el-menu-item>
-            <el-menu-item index="1-3">
+            <!-- <el-menu-item index="1-3">
               <router-link to="/SettingPage">数据测试</router-link>
-            </el-menu-item>
+            </el-menu-item> -->
             <!-- <el-menu-item index="1-4">
               <router-link to="/mapdemo2">未定义</router-link>
             </el-menu-item> -->
@@ -46,10 +47,10 @@
             <template slot="title"
               ><i class="el-icon-setting"></i>个人中心</template
             >
-            <el-menu-item index="2-1">
+            <el-menu-item index="3-1">
               <router-link to="/UserPage">个人信息</router-link>
             </el-menu-item>
-            <el-menu-item index="2-2">
+            <el-menu-item index="3-2">
               <router-link to="/DrivePage">设备管理</router-link>
             </el-menu-item>
             <!-- <el-menu-item index="2-3">未定义</el-menu-item> -->
@@ -58,7 +59,7 @@
       </el-aside>
 
       <el-container>
-        <el-header style="text-align: right; font-size: 12p;background-color: #E4E7ED;height:60px">
+        <el-header style="text-align: right; font-size: 18px;background-color: #E4E7ED;height:60px">
           <spin>Beta 1.0 </spin>
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
@@ -68,8 +69,9 @@
               <el-dropdown-item>退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <span style="font-size:16px">欢迎你：{{ $store.getters.getUser.name }}---</span>
-          <i class="el-icon-switch-button" @click="logout"></i>
+          <span style="font-size:18px">欢迎你：{{ $store.getters.getUser.name }}---</span>
+          <!-- <i class="el-icon-switch-button" @click="logout"></i> -->
+          <el-button type="danger"  @click="logout" size="small" round>退出</el-button>
         </el-header>
 
         <el-main>
@@ -113,6 +115,10 @@ export default {
 </script>
 
 <style scoped>
+.appbody a {
+    text-decoraction: none;
+}
+
 .el-header {
   background-color: #b3c0d1;
   /*opacity:0.5;*/
@@ -124,15 +130,19 @@ export default {
   color: #333;
   /*opacity:0.5;*/
 }
-.appbody {
-  /*background:url("../assets/bg.jpg");*/
-  /*width:100%;*/
-  /*大小设置为100%*/
-  /*height:100%;*/
-  /*大小设置为100%*/
-  /*position:fixed;*/
-  /*background-size:100% 100%;*/
+
+
+.router-link-active {
+    text-decoration: none;
 }
+a.router-link-active,nav li a:hover {
+    display: block;
+    background: #1d27df;
+    color: #fff;
+    border-radius: 0 20px;
+    text-shadow: none
+  }
+
 .appbody{
   width:100%;
   height:100%;
@@ -140,6 +150,7 @@ export default {
   background-repeat: no-repeat;
   background-size:100% 100%;
   background-attachment:fixed;
+  padding-bottom: 1px;
   
 }
 .appbody::after{

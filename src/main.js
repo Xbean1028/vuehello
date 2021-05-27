@@ -10,6 +10,10 @@ import Vuex from 'vuex'
 import axios from "axios";
 import store from './store'
 
+// 在入口文件中引入基本样式
+import './assets/reset.css'
+import './assets/border.css'
+
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(VueRouter);
@@ -36,16 +40,17 @@ aMap.initAMapApiLoader({
     uiVersion: '1.0' // ui版本
 })
 
-lazyAMapApiLoaderInstance.load().then(() => {
-    // your code ...
-    this.map = new AMap.Map('amapContainer', {
-        center: new AMap.LngLat(121.59996, 31.197646)
-    });
-});
+// lazyAMapApiLoaderInstance.load().then(() => {
+//     // your code ...
+//     this.map = new AMap.Map('amapContainer', {
+//         center: new AMap.LngLat(121.59996, 31.197646)
+//     });
+// });
 
 Vue.prototype.axios = axios;
-
-// 路由跳转之前
+// 远程后台地址
+axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+    // 路由跳转之前
 router.beforeEach((to, from, next) => {
     const isLogin = sessionStorage.getItem('isLogin');
     if (to.path == '/logout') {

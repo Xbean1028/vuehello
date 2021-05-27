@@ -45,7 +45,7 @@
       <el-table-column prop="jing" label="经度半球"> </el-table-column>
     </el-table>
 
-    <el-form ref="form" :model="form" label-width="80px">
+    <!-- <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="经度">
         <el-input v-model="form.input1"></el-input>
       </el-form-item>
@@ -58,7 +58,7 @@
         <el-button>取消</el-button>
         <el-button @click="onremove">清理</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
   </body>
 </template>
 
@@ -222,7 +222,7 @@ export default {
     },
     onSearchdev(){
       console.log(this.valuedev);
-      this.axios.get("http://127.0.0.1:8000/mapwebapp/getAllData", {
+      this.axios.get("mapwebapp/getAllData", {
               params: {
                 devid: this.valuedev
               },
@@ -270,7 +270,7 @@ export default {
     },
     onSearchdatedev(){
       console.log(this.valuedate);
-      this.axios.get("http://127.0.0.1:8000/mapwebapp/getAllDateData", {
+      this.axios.get("mapwebapp/getAllDateData", {
               params: {
                 devid: this.valuedev,
                 valuedate1:this.valuedate[0],

@@ -20,7 +20,7 @@
       ></el-button>
       <!-- <span class="demonstration">电子围栏开关</span> -->
       <el-switch
-        v-model="value1"
+        v-model="valueswitch"
         active-text="开启围栏"
         inactive-text="关闭围栏"
         style="float: right"
@@ -50,7 +50,7 @@
       <el-table-column prop="jing" label="经度半球"> </el-table-column>
     </el-table>
 
-    <el-form ref="form" :model="form" label-width="80px">
+    <!-- <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="经度">
         <el-input v-model="form.input1"></el-input>
       </el-form-item>
@@ -63,7 +63,7 @@
         <el-button>取消</el-button>
         <el-button @click="onremove">清理</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
   </body>
 </template>
 
@@ -104,7 +104,7 @@ export default {
       ],
       dev: store.getters.getUser.dev,
       userid: store.getters.getUser.name,
-      value1: true, //电子围栏
+      valueswitch: true, //电子围栏
       markers:'',
       GPSdatelabel:'',
     };
@@ -182,34 +182,9 @@ export default {
     //////////////////////////////////////////////////////////
     this.timer = window.setInterval(this.onSearchdev, 20000);
     selfs.timer = this.timer;
+    //window.clearTimeout(selfs.timer);
     //clearTimeout(selfs.timer);
-    // var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
-    // self.rectangleEditor = rectangleEditor;
-    // rectangleEditor.on("adjust", function (event) {
-    //   console.log("触发事件：adjust");
-    // });
 
-    // rectangleEditor.on("end", function (event) {
-    //   console.log("触发事件： end");
-    //   // event.target 即为编辑后的矩形对象
-    // });
-
-    // 创建两个点标记
-    // var m1 = new AMap.Marker({
-    //   position: [116.49, 39.9],
-    // });
-    // var m2 = new AMap.Marker({
-    //   position: [116.29, 39.9],
-    // });
-    // var m3 = new AMap.Marker({
-    //   position: [116.69, 39.9],
-    //   icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
-    // });
-
-    // mMap.add(m1);
-    // mMap.add(m2);
-    // mMap.add(m3);
-    //mMap.setFitView();
   },
   methods: {
     onSubmit() {
@@ -226,8 +201,10 @@ export default {
     },
     onSearchdev() {
       console.log(this.valuedev);
+      self.mMap.clearMap();
+      this.getCircle();
       this.axios
-        .get("http://127.0.0.1:8000/mapwebapp/getLastData", {
+        .get("mapwebapp/getLastData", {
           params: {
             devid: this.valuedev,
           },
@@ -239,20 +216,17 @@ export default {
             var tempitem = null;
             var item = null;
             this.tableData.splice(0, this.tableData.length);
-            self.mMap.clearMap();
-            // if(selfs.marker){
-            //   console.log(selfs.marker);
-            //     self.mMap.remove(selfs.marker);
-            // };
+            //self.mMap.clearMap();
+            
             //设置围栏区域
-            if (this.value1 == true) {
-              //alert("f-true");
-              //this.mMap.setFitView([rectangle]);
-              this.getCircle();
-              //selfs.rectangle.show();
-            } else {
-              //selfs.rectangle.hide();
-            }
+            // if (this.valueswitch == true) {
+            //   //alert("f-true");
+            //   //this.mMap.setFitView([rectangle]);
+            //   this.getCircle();
+            //   //selfs.rectangle.show();
+            // } else {
+            //   //selfs.rectangle.hide();
+            // }
             
             for (item of response.data.datas) {
               tempitem = {
@@ -287,6 +261,7 @@ export default {
     },
     rectangleEditoropen() {
       this.rectangleEditor.open();
+
     },
     rectangleEditorclose() {
       this.rectangleEditor.close();
@@ -298,7 +273,7 @@ export default {
       //console.log(self.mMap.getBounds().northeast);
       console.log(this.NEQ, this.NER, this.SWQ, this.SWR);
       this.axios
-        .get("http://127.0.0.1:8000/mapwebapp/saveCircle", {
+        .get("mapwebapp/saveCircle", {
           params: {
             devid: this.valuedev,
             NEQ: this.NEQ,
@@ -318,21 +293,81 @@ export default {
       // getBoundingClientRect
     },
     changeSwitch(val) {
-      if (val == true) {
-        //alert("f-true");
-        this.getCircle();
-        //this.rectangle.show();
-      } else {
-        //alert("ffff")
-        this.rectangle.hide();
-      }
+      
+      this.axios
+        .get("mapwebapp/switchCircle", {
+          params: {
+            devid: this.valuedev,
+            switch:this.valueswitch
+          },
+        })
+        .then((response) => {
+          console.log("/a", response.data);
+          if (response.data.code == "OK") {
+            //var tempdata = [];
+            console.log("switchCircle OK"+val);
+            this.onSearchdev();
+          }
+          if (response.data.code == "NULL") {
+            //var tempdata = [];
+            console.log("switchCircle NULL"+val);
+            if (val == true){
+              var southWest = new AMap.LngLat(122.068712, 37.527448);
+              var northEast = new AMap.LngLat(122.084160, 37.534323);
+              var bounds = new AMap.Bounds(southWest, northEast);
+              var rectangle = new AMap.Rectangle({
+                bounds: bounds,
+                strokeColor: "red",
+                strokeWeight: 6,
+                strokeOpacity: 0.5,
+                strokeDasharray: [30, 10],
+                // strokeStyle还支持 solid
+                strokeStyle: "dashed",
+                fillColor: "blue",
+                fillOpacity: 0.5,
+                cursor: "pointer",
+                zIndex: 50,
+              });
+              rectangle.setMap(mMap);
+              this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
+              // 缩放地图到合适的视野级别
+              mMap.setFitView([rectangle]);
+              var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
+              this.rectangleEditor = rectangleEditor;
+              rectangleEditor.on("adjust", function (event) {
+                console.log("触发事件：adjust");
+              });
+
+              rectangleEditor.on("end", function (event) {
+                console.log("触发事件： end");
+                // event.target 即为编辑后的矩形对象
+              });
+            }
+            else{
+              this.rectangle.hide();
+            }
+          }
+        })
+        .catch((error) => console.log(error));
+
+      
+
+      // if (val == true) {
+      //   //alert("f-true");
+      //   //this.rectangle.hide();
+      //   this.getCircle();
+      //   //this.rectangle.show();
+      // } else {
+      //   //alert("ffff")
+      //   //this.rectangle.hide();
+      //   this.getCircle();
+      // }
     },
     getCircle(){
       this.axios
-        .get("http://127.0.0.1:8000/mapwebapp/getCircle", {
+        .get("mapwebapp/getCircle", {
           params: {
-            devid: this.valuedev,
-
+            devid: this.valuedev
           },
         })
         .then((response) => {
@@ -340,47 +375,57 @@ export default {
           if (response.data.code == "OK") {
             console.log("get OK");
             var data = response.data.datas[0];
-            this.NEQ = data.x1;
-            this.NER = data.y1;
-            this.SWQ = data.x2;
-            this.SWR = data.y2;
+            this.NEQ = data.NEQ;
+            this.NER = data.NER;
+            this.SWQ = data.SWQ;
+            this.SWR = data.SWR;
             this.SetIsDelete = data.isDelete;
+            if(data.isDelete==0){
+              this.valueswitch = true;
+              var southWest = new AMap.LngLat(this.SWR, this.SWQ);
+              var northEast = new AMap.LngLat(this.NER, this.NEQ);
+              var bounds = new AMap.Bounds(southWest, northEast);
+              var rectangle = new AMap.Rectangle({
+                bounds: bounds,
+                strokeColor: "red",
+                strokeWeight: 6,
+                strokeOpacity: 0.5,
+                strokeDasharray: [30, 10],
+                // strokeStyle还支持 solid
+                strokeStyle: "dashed",
+                fillColor: "blue",
+                fillOpacity: 0.5,
+                cursor: "pointer",
+                zIndex: 50,
+              });
+              rectangle.setMap(mMap);
+              this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
+              selfs.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
+              // 缩放地图到合适的视野级别
+              self.mMap.setFitView([rectangle]);
+              var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
+              this.rectangleEditor = rectangleEditor;
+              rectangleEditor.on("adjust", function (event) {
+                console.log("触发事件：adjust");
+              });
+
+              rectangleEditor.on("end", function (event) {
+                console.log("触发事件： end");
+                // event.target 即为编辑后的矩形对象
+              });
+            }
+            else{
+              this.valueswitch = false;
+              this.rectangle.hide();
+
+            }
             console.log(this.NEQ,this.NER,this.SetIsDelete);
             ////////
-            var southWest = new AMap.LngLat(this.SWR, this.SWQ);
-            var northEast = new AMap.LngLat(this.NER, this.NEQ);
-            var bounds = new AMap.Bounds(southWest, northEast);
-            var rectangle = new AMap.Rectangle({
-              bounds: bounds,
-              strokeColor: "red",
-              strokeWeight: 6,
-              strokeOpacity: 0.5,
-              strokeDasharray: [30, 10],
-              // strokeStyle还支持 solid
-              strokeStyle: "dashed",
-              fillColor: "blue",
-              fillOpacity: 0.5,
-              cursor: "pointer",
-              zIndex: 50,
-            });
-            rectangle.setMap(mMap);
-            this.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
-            selfs.rectangle = rectangle; //rectangle暴露出去，要不然控制不到
-            // 缩放地图到合适的视野级别
-            self.mMap.setFitView([rectangle]);
-            var rectangleEditor = new AMap.RectangleEditor(mMap, rectangle);
-            this.rectangleEditor = rectangleEditor;
-            rectangleEditor.on("adjust", function (event) {
-              console.log("触发事件：adjust");
-            });
-
-            rectangleEditor.on("end", function (event) {
-              console.log("触发事件： end");
-              // event.target 即为编辑后的矩形对象
-            });
+            
           }
           else if (response.data.code == "NULL") {
             console.log("get NULL");
+
           }
         })
         .catch((error) => console.log(error));
@@ -406,7 +451,7 @@ export default {
               });
                self.mMap.add(marker);
             }
-            else if(!flag&&selfs.value1){
+            else if(!flag&&selfs.valueswitch){
               var marker = new AMap.Marker({
                 position: resLnglat,
                 icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
