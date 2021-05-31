@@ -1,5 +1,11 @@
 <template>
   <div>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>辅助功能</el-breadcrumb-item>
+      <el-breadcrumb-item>定位测试</el-breadcrumb-item>
+    </el-breadcrumb>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
 
@@ -82,7 +88,7 @@ export default {
 
 <style scoped>
 .info {
-  width: 26rem;
+  width: 100%;
   text-align: center;
   margin: auto;
 }

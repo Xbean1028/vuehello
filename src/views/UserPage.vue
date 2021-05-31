@@ -1,11 +1,18 @@
 <template>
   <div>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>个人中心</el-breadcrumb-item>
+      <el-breadcrumb-item>个人信息</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-row>
       <el-col :span="24"
         ><div class="grid-content" style="font: 20px 微软雅黑">用户信息</div></el-col
       >
     </el-row>
-    <el-table :data="tableData" border style="width: 80%" height="400">
+    <el-table :data="tableData" border style="width: 80%">
+      <!-- style="width: 80%" height="100%" -->
       <el-table-column prop="user_name" label="用户名"> </el-table-column>
       <el-table-column prop="user_id" label="用户id"> </el-table-column>
       <el-table-column prop="user_email" label="Email" wight="200">

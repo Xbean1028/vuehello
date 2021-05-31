@@ -54,12 +54,12 @@ export default {
 }
 .foot {
     /* position: absolute; */
-    bottom: 10px;
+    /* bottom: 10px; */
     z-index: 1000;
     text-align: center;
     width: 100%;
     color: #999;
-    height: 20px;
+    /* height: 5vh; */
     line-height: 20px;
     font-size: 12px;
 }

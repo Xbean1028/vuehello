@@ -18,6 +18,8 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm(form)">登录</el-button>
+        <el-button type="info" @click="resetLoginForm">重置</el-button>
+        <el-link target="_blank" href="https://mapapi.xubean.top/admin" style="float: right">管理员登录</el-link>
       </el-form-item>
     </el-form>
   </div>
@@ -40,12 +42,19 @@ export default {
     };
   },
   mounted() {
-    console.log(sessionStorage.getItem('isLogin'));
-    if (sessionStorage.getItem('isLogin')){
-        this.$router.push("/index");
-      }
+    // console.log(sessionStorage.getItem('isLogin'));
+    // if (sessionStorage.getItem('isLogin')){
+    //     this.$router.push("/index");
+    //   }
   },
   methods: {
+    resetLoginForm () {
+      // console.log(this)
+      // resetFields：element-ui提供的表单方法
+      //this.$refs.rules.resetFields()
+      this.form.name = "";
+      this.form.password = "";
+    },
     onsubmit() {
       this.$router.push("/index");
     },

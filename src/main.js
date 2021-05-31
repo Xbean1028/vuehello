@@ -13,6 +13,7 @@ import store from './store'
 // 在入口文件中引入基本样式
 import './assets/reset.css'
 import './assets/border.css'
+import './assets/global.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
@@ -49,7 +50,8 @@ aMap.initAMapApiLoader({
 
 Vue.prototype.axios = axios;
 // 远程后台地址
-axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+// axios.defaults.baseURL = 'http://127.0.0.1:8000/'
+axios.defaults.baseURL = 'https://mapapi.xubean.top/'
     // 路由跳转之前
 router.beforeEach((to, from, next) => {
     const isLogin = sessionStorage.getItem('isLogin');

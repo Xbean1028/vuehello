@@ -1,5 +1,11 @@
 <template>
   <div>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>辅助功能</el-breadcrumb-item>
+      <el-breadcrumb-item>卫星图层</el-breadcrumb-item>
+    </el-breadcrumb>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
 
@@ -12,42 +18,43 @@
       <!-- <p>
         由于众多浏览器已不再支持非安全域的定位请求，为保位成功率和精度，请升级您的站点到HTTPS。
       </p> -->
-      <div class="input-card" style="width: 24rem">
+      <div class="input-card" style="width: 100%">
         <h4>添加、删除图层（Layer）</h4>
         <div class="input-item">
           <label>卫星图层：</label>
-          <button
+          <el-button type="info" 
+          size="small"
             class="btn"
             id="add-satellite-layer"
             style="margin-right: 1rem"
           >
             添加卫星图层
-          </button>
-          <button class="btn" id="remove-satellite-layer">删除卫星图层</button>
+          </el-button>
+           <el-button type="info" size="small" class="btn" id="remove-satellite-layer">删除卫星图层</el-button>
         </div>
         <div class="input-item">
           <label>红色标记：</label>
-          <button class="btn" id="add-roadnet-layer" style="margin-right: 1rem">
+           <el-button type="info" size="small"  class="btn" id="add-roadnet-layer" style="margin-right: 1rem">
             添加路网图层
-          </button>
-          <button class="btn" id="remove-roadnet-layer">删除路网图层</button>
+          </el-button>
+           <el-button type="info" size="small" class="btn" id="remove-roadnet-layer">删除路网图层</el-button>
         </div>
       </div>
-      <div class="input-card" style="width: 24rem">
+      <div class="input-card" style="width: 100%;">
         <h4>添加、删除覆盖物</h4>
         <div class="input-item">
           <label>Marker：</label>
-          <button class="btn" id="add-marker" style="margin-right: 1rem">
+          <el-button type="info" size="small" class="btn" id="add-marker" style="margin-right: 1rem">
             添加Marker
-          </button>
-          <button class="btn" id="remove-marker">删除Marker</button>
+          </el-button>
+           <el-button type="info" size="small" class="btn" id="remove-marker">删除Marker</el-button>
         </div>
         <div class="input-item">
           <label>Circle：</label>
-          <button class="btn" id="add-circle" style="margin-right: 1rem">
+           <el-button type="info" size="small"  class="btn" id="add-circle" style="margin-right: 1rem">
             添加Circle
-          </button>
-          <button class="btn" id="remove-circle">删除Circle</button>
+          </el-button>
+           <el-button type="info" size="small" class="btn" id="remove-circle">删除Circle</el-button>
         </div>
       </div>
     </div>
@@ -171,7 +178,7 @@ export default {
 
 <style scoped>
 .info {
-  width: 26rem;
+  width: 100%;
   text-align: center;
   margin: auto;
 }
@@ -181,6 +188,10 @@ export default {
 }
 .tip {
   text-align: center;
+  width: 100%;
   /* margin: 15px auto; */
+}
+.input-item {
+  margin: 10px;
 }
 </style>

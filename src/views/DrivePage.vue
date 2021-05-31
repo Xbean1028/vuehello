@@ -1,11 +1,18 @@
 <template>
-  <div>
+  <div class="infopage">
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>个人中心</el-breadcrumb-item>
+      <el-breadcrumb-item>设备管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <el-row>
       <el-col :span="24"
         ><div class="grid-content" style="font: 20px 微软雅黑">我的设备</div></el-col
       >
     </el-row>
-    <el-table :data="tableData" border style="width: 80%" height="400">
+    <el-table :data="tableData" border style="width: 80%">
+      <!-- style="width: 80%" height="100%" -->
       <el-table-column prop="dev_id" label="设备id">
       </el-table-column>
       <el-table-column prop="user_id" label="用户id">
@@ -95,6 +102,9 @@ export default {
 </script>
 
 <style scoped>
+.infopage {
+  height: 100%;
+}
 .el-row {
   margin-bottom: 20px;
   /* &:last-child {

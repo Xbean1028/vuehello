@@ -1,5 +1,11 @@
 <template>
   <body>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>功能导航</el-breadcrumb-item>
+      <el-breadcrumb-item>数据中心</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="block">
       <!-- <span>111{{$store.getters.getUser.dev}}</span> -->
       <span class="demonstration">设备筛选</span>
@@ -28,8 +34,28 @@
       >
       </el-date-picker>
       <el-button type="success" icon="el-icon-check" circle @click="onSearchdatedev"></el-button>
-    </div>
 
+      <div style="float: right; text-align:right">
+        <div class="switchdiv">
+          <el-switch
+            v-model="valuetuceng"
+            active-text="卫星图层"
+            inactive-text="2D图层"
+            @change="changeSwitchtuceng($event)"
+          >
+          </el-switch>
+        </div>
+        <div class="switchdiv" >
+          <el-switch
+            v-model="valueluwang"
+            active-text="添加路网"
+            inactive-text="无路网"
+            @change="changeSwitchluwang($event)"
+          >
+          </el-switch>
+        </div>
+      </div>
+    </div>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
 
@@ -59,6 +85,7 @@
         <el-button @click="onremove">清理</el-button>
       </el-form-item>
     </el-form> -->
+
   </body>
 </template>
 
@@ -115,6 +142,8 @@ export default {
         // },
       ],
       valuedev: "",
+      valuetuceng:false,
+      valueluwang:false,
       form: {
         input1: "",
         input2: "",
@@ -205,6 +234,9 @@ export default {
     });
     console.log(this.options);
     console.log(this.valuedev);
+
+    this.satelliteLayer = new AMap.TileLayer.Satellite();
+    this.roadNetLayer = new AMap.TileLayer.RoadNet();
     
   },
   methods: {
@@ -222,7 +254,8 @@ export default {
     },
     onSearchdev(){
       console.log(this.valuedev);
-      this.axios.get("mapwebapp/getAllData", {
+      if(this.valuedev){
+        this.axios.get("mapwebapp/getAllData", {
               params: {
                 devid: this.valuedev
               },
@@ -249,6 +282,23 @@ export default {
               }
             })
             .catch(error => console.log(error))
+
+      }
+      
+    },
+    changeSwitchtuceng(val) {
+      if (val == true) {
+        self.mMap.add(this.satelliteLayer);
+      } else {
+        self.mMap.remove(this.satelliteLayer);
+      }
+    },
+    changeSwitchluwang(val) {
+      if (val == true) {
+        self.mMap.add(this.roadNetLayer);
+      } else {
+        self.mMap.remove(this.roadNetLayer);
+      }
     },
      // 坐标转换
     convertFrom(lnglat, type){
@@ -316,7 +366,7 @@ export default {
 <style scoped>
 /* @import"https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css";  */
 .info {
-  width: 26rem;
+  width: 100%;
   text-align: center;
   margin: auto;
 }
@@ -339,5 +389,12 @@ body {
   width: 150px;
   top: 10px;
   bottom: auto;
+}
+.demonstration {
+  font-size: 15px;
+}
+.switchdiv {
+  margin-right: 0px;
+  padding-top: 2px;
 }
 </style>

@@ -1,5 +1,11 @@
 <template>
   <body>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>功能导航</el-breadcrumb-item>
+      <el-breadcrumb-item>电子围栏</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="block">
       <!-- <span>111{{$store.getters.getUser.dev}}</span> -->
       <span class="demonstration">设备筛选</span>
@@ -19,26 +25,49 @@
         @click="onSearchdev"
       ></el-button>
       <!-- <span class="demonstration">电子围栏开关</span> -->
-      <el-switch
-        v-model="valueswitch"
-        active-text="开启围栏"
-        inactive-text="关闭围栏"
-        style="float: right"
-        @change="changeSwitch($event)"
-      >
-      </el-switch>
+
+      <div style="float: right; text-align: right">
+        <div class="switchdiv">
+          <el-switch
+            v-model="valuetuceng"
+            active-text="卫星图层"
+            inactive-text="2D图层"
+            @change="changeSwitchtuceng($event)"
+          >
+          </el-switch>
+        </div>
+        <div class="switchdiv">
+          <el-switch
+            v-model="valueluwang"
+            active-text="添加路网"
+            inactive-text="无路网"
+            @change="changeSwitchluwang($event)"
+          >
+          </el-switch>
+        </div>
+        <div class="switchdiv">
+          <el-switch
+            v-model="valueswitch"
+            active-text="开启围栏"
+            inactive-text="关闭围栏"
+            style="float: right"
+            @change="changeSwitch($event)"
+          >
+          </el-switch>
+        </div>
+      </div>
     </div>
     <div id="wrapper"></div>
     <!-- // 显示地图的容器，记得加宽高 -->
     <div class="input-card" style="width: 200px">
-      <button class="btn" @click="rectangleEditoropen">开始编辑</button>
-      <button class="btn" @click="rectangleEditorclose">结束编辑</button>
+      <el-button class="btn" @click="rectangleEditoropen">开始编辑</el-button>
+      <el-button class="btn" @click="rectangleEditorclose">结束编辑</el-button>
     </div>
 
-    <div id="tip" class="info">地图正在加载</div>
-    <div class="info"></div>
+    <!-- <div id="tip" class="info">地图正在加载</div>
+    <div class="info"></div> -->
 
-    <el-table :data="tableData" height="100" border style="width: 100%">
+    <el-table :data="tableData" height="100" border style="width: 100%;margin-top:0px">
       <el-table-column prop="dev_id" label="设备id"> </el-table-column>
       <el-table-column prop="GPSdate" label="日期" width="180">
       </el-table-column>
@@ -75,7 +104,7 @@ export default {
   name: "CircleLocation",
   data() {
     return {
-      timer: '',
+      timer: "",
       form: {
         input1: "",
         input2: "",
@@ -84,7 +113,7 @@ export default {
       NER: "", //jing
       SWQ: "",
       SWR: "",
-      SetIsDelete:"",
+      SetIsDelete: "",
       options: [
         // {
         //   value: "选项1",
@@ -92,6 +121,8 @@ export default {
         // },
       ],
       valuedev: "",
+      valuetuceng: false,
+      valueluwang: false,
       tableData: [
         // {
         //   GPSdate: "2016-05-03 19:20:30",
@@ -105,8 +136,8 @@ export default {
       dev: store.getters.getUser.dev,
       userid: store.getters.getUser.name,
       valueswitch: true, //电子围栏
-      markers:'',
-      GPSdatelabel:'',
+      markers: "",
+      GPSdatelabel: "",
     };
   },
   beforeRouteEnter: (to, from, next) => {
@@ -148,16 +179,16 @@ export default {
         );
       }
     );
-    mMap.on("complete", function () {
-      document.getElementById("tip").innerHTML =
-        "地图图块加载完毕！初始地图中心点为：" + mMap.getCenter();
-    });
+    // mMap.on("complete", function () {
+    //   document.getElementById("tip").innerHTML =
+    //     "地图图块加载完毕！初始地图中心点为：" + mMap.getCenter();
+    // });
 
     this.dev.forEach(function (element) {
       console.log(element.value);
       selfs.options.push({ value: element.value, label: element.value });
     });
-///////////////////////////////////////////创建rectangle对象，隐藏，防止报错
+    ///////////////////////////////////////////创建rectangle对象，隐藏，防止报错
     var southWest = new AMap.LngLat(122.080724, 37.532681);
     var northEast = new AMap.LngLat(122.080724, 37.528681);
     var bounds = new AMap.Bounds(southWest, northEast);
@@ -180,11 +211,13 @@ export default {
     mMap.setFitView([rectangle]);
     rectangle.hide();
     //////////////////////////////////////////////////////////
+    this.satelliteLayer = new AMap.TileLayer.Satellite();
+    this.roadNetLayer = new AMap.TileLayer.RoadNet();
+
     this.timer = window.setInterval(this.onSearchdev, 20000);
     selfs.timer = this.timer;
     //window.clearTimeout(selfs.timer);
     //clearTimeout(selfs.timer);
-
   },
   methods: {
     onSubmit() {
@@ -201,67 +234,66 @@ export default {
     },
     onSearchdev() {
       console.log(this.valuedev);
-      self.mMap.clearMap();
-      this.getCircle();
-      this.axios
-        .get("mapwebapp/getLastData", {
-          params: {
-            devid: this.valuedev,
-          },
-        })
-        .then((response) => {
-          console.log("/a", response.data);
-          if (response.data.code == "OK") {
-            //var tempdata = [];
-            var tempitem = null;
-            var item = null;
-            this.tableData.splice(0, this.tableData.length);
-            //self.mMap.clearMap();
-            
-            //设置围栏区域
-            // if (this.valueswitch == true) {
-            //   //alert("f-true");
-            //   //this.mMap.setFitView([rectangle]);
-            //   this.getCircle();
-            //   //selfs.rectangle.show();
-            // } else {
-            //   //selfs.rectangle.hide();
-            // }
-            
-            for (item of response.data.datas) {
-              tempitem = {
-                dev_id: item.dev_id,
-                weideg: item.weideg,
-                jingdeg: item.jingdeg,
-                GPSdate: item.GPSdate,
-                wei: "N",
-                jing: "E",
-              };
-              this.tableData.push(tempitem);
-              this.GPSdatelabel = item.GPSdate;
-              var position = [
-                parseFloat(item.jingdeg),
-                parseFloat(item.weideg),
-              ];
-              //var positionpoint = new AMap.LngLat(item.jingdeg, item.weideg);
-              //console.log(this.rectangle.contains(positionpoint));
-              this.convertFrom(position, "gps");
-              
-              
-              // var m66 = new AMap.Marker({
-              // position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
-              // icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
-              // self.mMap.add(m66);
-              // self.mMap.setFitView();
-            }
-          }
-        })
-        .catch((error) => console.log(error));
+      if (this.valuedev) {
+        self.mMap.clearMap();
+        this.getCircle();
+        this.axios
+          .get("mapwebapp/getLastData", {
+            params: {
+              devid: this.valuedev,
+            },
+          })
+          .then((response) => {
+            console.log("/a", response.data);
+            if (response.data.code == "OK") {
+              //var tempdata = [];
+              var tempitem = null;
+              var item = null;
+              this.tableData.splice(0, this.tableData.length);
+              //self.mMap.clearMap();
 
+              //设置围栏区域
+              // if (this.valueswitch == true) {
+              //   //alert("f-true");
+              //   //this.mMap.setFitView([rectangle]);
+              //   this.getCircle();
+              //   //selfs.rectangle.show();
+              // } else {
+              //   //selfs.rectangle.hide();
+              // }
+
+              for (item of response.data.datas) {
+                tempitem = {
+                  dev_id: item.dev_id,
+                  weideg: item.weideg,
+                  jingdeg: item.jingdeg,
+                  GPSdate: item.GPSdate,
+                  wei: "N",
+                  jing: "E",
+                };
+                this.tableData.push(tempitem);
+                this.GPSdatelabel = item.GPSdate;
+                var position = [
+                  parseFloat(item.jingdeg),
+                  parseFloat(item.weideg),
+                ];
+                //var positionpoint = new AMap.LngLat(item.jingdeg, item.weideg);
+                //console.log(this.rectangle.contains(positionpoint));
+                this.convertFrom(position, "gps");
+
+                // var m66 = new AMap.Marker({
+                // position: [parseFloat(item.jingdeg), parseFloat(item.weideg)],
+                // icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",});
+                // self.mMap.add(m66);
+                // self.mMap.setFitView();
+              }
+            }
+          })
+          .catch((error) => console.log(error));
+      }
     },
     rectangleEditoropen() {
       this.rectangleEditor.open();
-
     },
     rectangleEditorclose() {
       this.rectangleEditor.close();
@@ -293,27 +325,26 @@ export default {
       // getBoundingClientRect
     },
     changeSwitch(val) {
-      
       this.axios
         .get("mapwebapp/switchCircle", {
           params: {
             devid: this.valuedev,
-            switch:this.valueswitch
+            switch: this.valueswitch,
           },
         })
         .then((response) => {
           console.log("/a", response.data);
           if (response.data.code == "OK") {
             //var tempdata = [];
-            console.log("switchCircle OK"+val);
+            console.log("switchCircle OK" + val);
             this.onSearchdev();
           }
           if (response.data.code == "NULL") {
             //var tempdata = [];
-            console.log("switchCircle NULL"+val);
-            if (val == true){
+            console.log("switchCircle NULL" + val);
+            if (val == true) {
               var southWest = new AMap.LngLat(122.068712, 37.527448);
-              var northEast = new AMap.LngLat(122.084160, 37.534323);
+              var northEast = new AMap.LngLat(122.08416, 37.534323);
               var bounds = new AMap.Bounds(southWest, northEast);
               var rectangle = new AMap.Rectangle({
                 bounds: bounds,
@@ -342,15 +373,12 @@ export default {
                 console.log("触发事件： end");
                 // event.target 即为编辑后的矩形对象
               });
-            }
-            else{
+            } else {
               this.rectangle.hide();
             }
           }
         })
         .catch((error) => console.log(error));
-
-      
 
       // if (val == true) {
       //   //alert("f-true");
@@ -363,11 +391,25 @@ export default {
       //   this.getCircle();
       // }
     },
-    getCircle(){
+    changeSwitchtuceng(val) {
+      if (val == true) {
+        self.mMap.add(this.satelliteLayer);
+      } else {
+        self.mMap.remove(this.satelliteLayer);
+      }
+    },
+    changeSwitchluwang(val) {
+      if (val == true) {
+        self.mMap.add(this.roadNetLayer);
+      } else {
+        self.mMap.remove(this.roadNetLayer);
+      }
+    },
+    getCircle() {
       this.axios
         .get("mapwebapp/getCircle", {
           params: {
-            devid: this.valuedev
+            devid: this.valuedev,
           },
         })
         .then((response) => {
@@ -380,7 +422,7 @@ export default {
             this.SWQ = data.SWQ;
             this.SWR = data.SWR;
             this.SetIsDelete = data.isDelete;
-            if(data.isDelete==0){
+            if (data.isDelete == 0) {
               this.valueswitch = true;
               var southWest = new AMap.LngLat(this.SWR, this.SWQ);
               var northEast = new AMap.LngLat(this.NER, this.NEQ);
@@ -413,79 +455,70 @@ export default {
                 console.log("触发事件： end");
                 // event.target 即为编辑后的矩形对象
               });
-            }
-            else{
+            } else {
               this.valueswitch = false;
               this.rectangle.hide();
-
             }
-            console.log(this.NEQ,this.NER,this.SetIsDelete);
+            console.log(this.NEQ, this.NER, this.SetIsDelete);
             ////////
-            
-          }
-          else if (response.data.code == "NULL") {
+          } else if (response.data.code == "NULL") {
             console.log("get NULL");
-
           }
         })
         .catch((error) => console.log(error));
-
     },
     // 坐标转换
-    convertFrom(lnglat, type){
-      
-        AMap.convertFrom(lnglat, type, function (status, result) {
-          if (result.info === 'ok') {
-            var resLnglat = result.locations[0];
-            // var marker = new AMap.Marker({
-            //     position: resLnglat,
-            // });
-            // self.mMap.add(marker);
-            // self.mMap.setFitView();
-            //根据矩形判断，区域内蓝色，区域外红色
-            var flag = selfs.rectangle.contains(resLnglat);
-            console.log(flag);
-            if (flag){
-              var marker = new AMap.Marker({
-                position: resLnglat,
-              });
-               self.mMap.add(marker);
-            }
-            else if(!flag&&selfs.valueswitch){
-              var marker = new AMap.Marker({
-                position: resLnglat,
-                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
-                });
-              // marker.setLabel({
-              //     offset: new AMap.Pixel(20, 20),
-              //     content: selfs.GPSdatelabel
-              // });
-              self.mMap.add(marker);
-            }
-            else{
-              var marker = new AMap.Marker({
-                position: resLnglat,
-              });
-               self.mMap.add(marker);
-            }
-            self.mMap.setFitView();
-            //this.marker=marker;
-            // 设置标签
-            // m2.setLabel({
+    convertFrom(lnglat, type) {
+      AMap.convertFrom(lnglat, type, function (status, result) {
+        if (result.info === "ok") {
+          var resLnglat = result.locations[0];
+          // var marker = new AMap.Marker({
+          //     position: resLnglat,
+          // });
+          // self.mMap.add(marker);
+          // self.mMap.setFitView();
+          //根据矩形判断，区域内蓝色，区域外红色
+          var flag = selfs.rectangle.contains(resLnglat);
+          console.log(flag);
+          if (flag) {
+            var marker = new AMap.Marker({
+              position: resLnglat,
+            });
+            self.mMap.add(marker);
+          } else if (!flag && selfs.valueswitch) {
+            var marker = new AMap.Marker({
+              position: resLnglat,
+              icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+            });
+            // marker.setLabel({
             //     offset: new AMap.Pixel(20, 20),
-            //     content: "高德坐标系中首开广场（正确）"
+            //     content: selfs.GPSdatelabel
             // });
+            self.mMap.add(marker);
+          } else {
+            var marker = new AMap.Marker({
+              position: resLnglat,
+            });
+            self.mMap.add(marker);
           }
-        });
-    }
-  }
+          self.mMap.setFitView();
+          //this.marker=marker;
+          // 设置标签
+          // m2.setLabel({
+          //     offset: new AMap.Pixel(20, 20),
+          //     content: "高德坐标系中首开广场（正确）"
+          // });
+        }
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
 /* @import"https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css";  */
 .info {
-  width: 26rem;
+  width: 100%;
   text-align: center;
   margin: auto;
 }
@@ -511,5 +544,12 @@ body {
   align-items: center;
   display: flex;
   justify-content: space-around;
+}
+.demonstration {
+  font-size: 15px;
+}
+.switchdiv {
+  margin-right: 0px;
+  padding-top: 2px;
 }
 </style>

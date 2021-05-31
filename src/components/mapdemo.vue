@@ -1,5 +1,11 @@
 <template>
   <div>
+    <!-- 面包屑导航区 -->
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>辅助功能</el-breadcrumb-item>
+      <el-breadcrumb-item>拾取位置</el-breadcrumb-item>
+    </el-breadcrumb>
     <div>
       <span>搜索：</span>
       <input
