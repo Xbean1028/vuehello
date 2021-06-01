@@ -61,7 +61,7 @@
 
     <div id="tip" class="info">地图正在加载</div>
     <div class="info"></div>
-    <el-table :data="tableData" height="500" border style="width: 100%">
+    <el-table :data="tableData" height="500" border style="width: 100%;margin-top:0px">
       <el-table-column prop="dev_id" label="设备id">
       </el-table-column>
       <el-table-column prop="GPSdate" label="日期" width="180"> </el-table-column>

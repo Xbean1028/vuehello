@@ -23,9 +23,9 @@
         type="success"
         icon="el-icon-check"
         circle
-        @click="onSearchdev"
+        @click="onSearchdevBut"
       ></el-button>
-      <el-button type="primary" round @click="onSearchAll">
+      <el-button type="primary" round @click="onSearchAllBut">
         显示全部设备</el-button
       >
       <div style="float: right; text-align:right">
@@ -50,8 +50,8 @@
         <div class="switchdiv" >
           <el-switch
             v-model="valueshuaxin"
-            active-text="自动刷新"
-            inactive-text="不刷新"
+            active-text="刷新全部"
+            inactive-text="默认刷新"
             @change="changeSwitchshuaxin($event)"
           >
           </el-switch>
@@ -66,7 +66,7 @@
     <div id="tip" class="info">地图正在加载</div>
     <div class="info"></div>
 
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData" border style="width: 100%;margin-top:0px">
       <el-table-column prop="dev_id" label="设备id"> </el-table-column>
       <el-table-column prop="GPSdate" label="日期" width="180">
       </el-table-column>
@@ -140,7 +140,7 @@ export default {
   },
   beforeRouteLeave: (to, from, next) => {
     console.log("离开位置信息界面");
-    window.clearTimeout(self.timer);
+    window.clearTimeout(selfs.timer);
     next();
   },
   created() {
@@ -195,12 +195,13 @@ export default {
     });
     this.satelliteLayer = new AMap.TileLayer.Satellite();
     this.roadNetLayer = new AMap.TileLayer.RoadNet();
+    this.onTimeStart();
 
-    this.timer = window.setInterval(this.onSearchdev, 20000);
-    self.timer = this.timer;
+    
     //clearTimeout(selfs.timer);
   },
   methods: {
+    
     onSubmit() {
       console.log("submit!");
       var m3 = new AMap.Marker({
@@ -212,6 +213,18 @@ export default {
     },
     onremove() {
       self.mMap.clearMap();
+    },
+    onSearchdevBut(){
+      //关闭定时器
+      window.clearTimeout(selfs.timer);
+      this.onSearchdev();
+
+    },
+    onSearchAllBut(){
+      //关闭定时器
+      window.clearTimeout(selfs.timer);
+      this.onSearchAll();
+
     },
     onSearchdev() {
       console.log(this.valuedev);
@@ -259,8 +272,6 @@ export default {
     },
     //显示所有设备位置
     onSearchAll() {
-      //关闭定时器
-      window.clearTimeout(selfs.timer);
       // var tempdev = self.valuedev;
       self.mMap.clearMap();
       selfs.tableData.splice(0, selfs.tableData.length);
@@ -350,8 +361,48 @@ export default {
     },
     changeSwitchshuaxin(val) {
       if (val == true) {
+        self.mMap.clearMap();
+        this.onTimeStop();
+        this.onTimeAllStart();
+
       } else {
+        self.mMap.clearMap();
+        this.onTimeAllStop();
+        this.onTimeStart();
       }
+    },
+    //自动刷新封装
+    //默认刷新
+    onTimeStart(){
+      if(this.timer){
+        window.clearTimeout(this.timer);
+        console.log("window.clearTimeout:onTimeStart");
+      }
+      console.log("window.setInterval:onTimeStart");
+      this.onSearchdev();
+      this.timer = window.setInterval(this.onSearchdev, 20000);
+      selfs.timer = this.timer;
+
+    },
+    onTimeStop(){
+      console.log("window.clearTimeout:onTimeStop");
+      window.clearTimeout(this.timer);
+    },
+    //刷新全部
+    onTimeAllStart(){
+      if(this.timer){
+        window.clearTimeout(this.timer);
+        console.log("window.clearTimeout:onTimeAllStart");
+      }
+      console.log("window.setInterval:onTimeAllStart");
+      this.onSearchAll();
+      this.timer = window.setInterval(this.onSearchAll, 20000);
+      selfs.timer = this.timer;
+
+    },
+    onTimeAllStop(){
+      console.log("window.clearTimeout:onTimeAllStart");
+      window.clearTimeout(this.timer);
     },
     // 坐标转换
     convertFrom(lnglat, type) {
