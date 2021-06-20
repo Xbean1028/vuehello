@@ -23,9 +23,16 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### 项目日志
-5.2 初步实现界面绘制，高德地图导入
-计划明天完成硬件端代码，MQTT部分
+### 项目说明
+高德SDK是我申请的，有需要可以在官网申请。本地部署注意前后端通信网址修改。
 
-5.31 UI美化
-BUG：自动刷新问题
+安装npm，Vue-cli后在项目目录运行`npm install` 和`npm run serve`就能跑起来。登录的账号密码是后端数据库的。在后端的后台管理界面设一个账户就能登录。
+
+现在用的后端连接：https://mapapi.xubean.top/
+
+源码：https://github.com/Xbean1028/vuehello
+
+已经部署的 https://mapapi.xubean.top/
+
+测试：账号test1         密码test1
+
